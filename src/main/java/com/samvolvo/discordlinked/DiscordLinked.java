@@ -26,6 +26,14 @@ public final class DiscordLinked extends JavaPlugin {
         saveDefaultConfig();
         loadConfig();
 
+        //Config Checks!
+        if (getConfig().getString("DC_Token") != null || getConfig().getString("DC_Token").equals("")) {
+            getLogger().info("§cDisabling §cDiscordLinked: §cPlease fill in the bot token in the config.yml!");
+            getServer().getPluginManager().disablePlugin(this);
+            return; // Exit the onEnable method early
+        }
+
+
         //Discord
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(getConfig().getString("DC_Token"));
         builder.setStatus(OnlineStatus.DO_NOT_DISTURB);
