@@ -5,3 +5,11 @@
 
 
 DC_Token: ""
+
+# General settings
+general:
+  joinMessages: true
+  chatSync: true
+  joinVerification: true
+
+minecraft:
