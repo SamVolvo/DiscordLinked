@@ -13,3 +13,13 @@ general:
   joinVerification: true
 
 minecraft:
+  needDiscord: true
+  # Sends the commands send in Minecraft to the Discord Channel that have been set
+  sendCommands: true
+
+discord:
+  # Sends the commands send in discord to the Online Minecraft players that have the permission
+  sendCommands: true
+  guildId: ""
+  chatChannel: ""
+  adminChannel: ""

@@ -1,5 +1,7 @@
 package com.samvolvo.discordlinked;
 
+import com.samvolvo.discordlinked.Utils.*;
+import com.samvolvo.discordlinked.minecraft.events.JoinLeave;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -15,8 +17,8 @@ import java.io.IOException;
 
 public final class DiscordLinked extends JavaPlugin {
 
-    private FileConfiguration config;
-    private File configFile;
+    private static FileConfiguration config;
+    private static File configFile;
     private static ShardManager shardManager;
 
     @Override
@@ -26,13 +28,21 @@ public final class DiscordLinked extends JavaPlugin {
         saveDefaultConfig();
         loadConfig();
 
+
+
         //Config Checks!
-        if (getConfig().getString("DC_Token") != null || getConfig().getString("DC_Token").equals("")) {
+        String token = getConfig().getString("DC_Token");
+        getLogger().info("DC_Token in config: " + token); // Debug statement
+
+        if (token == null || token.equals("")) {
             getLogger().info("§cDisabling §cDiscordLinked: §cPlease fill in the bot token in the config.yml!");
             getServer().getPluginManager().disablePlugin(this);
             return; // Exit the onEnable method early
+        } else {
+            getLogger().info("§aDC_Token found in config: " + token);
         }
 
+        MainConfig cnf = new MainConfig(this);
 
         //Discord
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(getConfig().getString("DC_Token"));
@@ -47,9 +57,13 @@ public final class DiscordLinked extends JavaPlugin {
         //Commands
 
         //Listeners
+        Bukkit.getPluginManager().registerEvents(new JoinLeave(), this);
+
+    }
 
 
-
+    public static ShardManager getShardManager() {
+        return shardManager;
     }
 
     @Override
