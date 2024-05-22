@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import org.bukkit.entity.Player;
 
+import static com.samvolvo.discordlinked.api.DiscordWebhooks.sendDiscordWebhook;
 import static java.lang.System.getLogger;
 
 public class SendToDiscord {
@@ -22,11 +23,11 @@ public class SendToDiscord {
     }
 
     public static void sendMessageDc(Player p, String message){
-        Guild guild = shardManager.getGuildById(guildId);
-        TextChannel channel = getTextChannel(channelId, guild);
+        String playerName = p.getDisplayName();
+        String playerUUID = p.getUniqueId().toString();
+        String avatarUrl = "https://api.mineatar.io/face/" + playerUUID;
 
-        channel.sendMessage("[MC] " + p.getDisplayName() + ": " + message).queue();
-
+        sendDiscordWebhook(playerName, avatarUrl, message);
     }
 
     public static void sendJoinLeaveDc(Player p, String joinLeave) {

@@ -1,5 +1,7 @@
 package com.samvolvo.discordlinked.Utils;
 
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bukkit.Bukkit;
@@ -17,5 +19,11 @@ public class SendToMc extends ListenerAdapter {
             }
         }
 
+    }
+
+    public static void sendMessageMc(Member member, String message){
+        for (Player player : Bukkit.getOnlinePlayers()){
+            player.sendMessage("§b§l[Dc] §f" + member.getEffectiveName() + ": " + message);
+        }
     }
 }

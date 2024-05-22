@@ -1,6 +1,8 @@
 package com.samvolvo.discordlinked;
 
 import com.samvolvo.discordlinked.Utils.*;
+import com.samvolvo.discordlinked.discord.events.DcChatEvent;
+import com.samvolvo.discordlinked.minecraft.events.McChatEvent;
 import com.samvolvo.discordlinked.minecraft.events.JoinLeave;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -10,6 +12,7 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -23,7 +26,7 @@ public final class DiscordLinked extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Bukkit.getConsoleSender().sendMessage("§bDCLinked: §a§lActive");
+        Bukkit.getConsoleSender().sendMessage("§bDiscord&aLinked: §a§lActive");
 
         saveDefaultConfig();
         loadConfig();
@@ -52,12 +55,13 @@ public final class DiscordLinked extends JavaPlugin {
         builder.build();
         shardManager = builder.build();
 
-        shardManager.addEventListener();
+        shardManager.addEventListener(new DcChatEvent());
 
         //Commands
 
         //Listeners
         Bukkit.getPluginManager().registerEvents(new JoinLeave(), this);
+        Bukkit.getPluginManager().registerEvents(new McChatEvent(), this);
 
     }
 
@@ -68,7 +72,11 @@ public final class DiscordLinked extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        Bukkit.getConsoleSender().sendMessage("§bDCLinked: §a§lDisabled");
+        for (Player player : Bukkit.getOnlinePlayers()){
+            SendToDiscord.sendJoinLeaveDc(player, "leave");
+        }
+
+        Bukkit.getConsoleSender().sendMessage("§bDiscord&aLinked: §c§lDisabled");
         saveConfig();
     }
 
