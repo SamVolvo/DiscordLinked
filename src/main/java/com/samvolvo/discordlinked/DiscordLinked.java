@@ -2,8 +2,11 @@ package com.samvolvo.discordlinked;
 
 import com.samvolvo.discordlinked.Utils.*;
 import com.samvolvo.discordlinked.discord.events.DcChatEvent;
+import com.samvolvo.discordlinked.discord.managers.CommandManager;
+import com.samvolvo.discordlinked.discord.managers.EmbedManager;
 import com.samvolvo.discordlinked.minecraft.events.McChatEvent;
 import com.samvolvo.discordlinked.minecraft.events.JoinLeave;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -46,7 +49,6 @@ public final class DiscordLinked extends JavaPlugin {
         }
 
         MainConfig cnf = new MainConfig(this);
-
         //Discord
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(getConfig().getString("DC_Token"));
         builder.setStatus(OnlineStatus.DO_NOT_DISTURB);
@@ -55,13 +57,15 @@ public final class DiscordLinked extends JavaPlugin {
         builder.build();
         shardManager = builder.build();
 
-        shardManager.addEventListener(new DcChatEvent());
+        shardManager.addEventListener(new CommandManager(),new DcChatEvent());
 
         //Commands
 
         //Listeners
         Bukkit.getPluginManager().registerEvents(new JoinLeave(), this);
         Bukkit.getPluginManager().registerEvents(new McChatEvent(), this);
+
+
 
     }
 
@@ -75,6 +79,8 @@ public final class DiscordLinked extends JavaPlugin {
         for (Player player : Bukkit.getOnlinePlayers()){
             SendToDiscord.sendJoinLeaveDc(player, "leave");
         }
+
+        SendToDiscord.sendEmbedDc(EmbedManager.startStop("off"));
 
         Bukkit.getConsoleSender().sendMessage("§bDiscord&aLinked: §c§lDisabled");
         saveConfig();

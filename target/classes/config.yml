@@ -1,0 +1,32 @@
+# Discord Linked #
+## Link your discord to your minecraft server and get the security you need! #
+# Created by SamVolvo and Thijs_D #
+## Tested by SamVolvo, Thijs_D, Siea and TiboVolvo ##
+# Full Wiki on this plugin on https://www.samvolvo.com/plugins/wiki/DiscordLinked/ #
+
+
+
+DC_Token: ""
+
+# General settings
+general:
+  joinMessages: true
+  chatSync: true
+  joinVerification: true
+
+minecraft:
+  prefix: "&b&l[Discord&a&lLinked]"
+  needVerifiedDiscord: true
+  # Sends the commands send in Minecraft to the Discord Channel that have been set
+  sendCommands: true
+
+  messages:
+    discord_prefix: "&b&l[DC]"
+
+discord:
+  # Sends the commands send in discord to the Online Minecraft players that have the permission
+  sendCommands: true
+  webhook_url: ""
+  guildId: ""
+  chatChannel: ""
+  adminChannel: ""

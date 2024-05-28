@@ -2,6 +2,7 @@ package com.samvolvo.discordlinked.discord.managers;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
@@ -15,10 +16,8 @@ public class EmbedManager {
 
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle(playerName + " has joined the server.")
-                .setAuthor("DiscordLinked")
                 .setColor(Color.GREEN)
                 .setThumbnail(playerHeadUrl)
-                .setTimestamp(Instant.now())
                 ;
 
         return embed.build();
@@ -31,11 +30,29 @@ public class EmbedManager {
 
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle(playerName + " has left the server.")
-                .setAuthor("DiscordLinked")
                 .setColor(Color.RED)
                 .setThumbnail(playerHeadUrl)
-                .setTimestamp(Instant.now())
         ;
+
+        return embed.build();
+    }
+
+    public static MessageEmbed startStop(String OnOff){
+        EmbedBuilder embed = new EmbedBuilder();
+
+        if (OnOff.equalsIgnoreCase("on")){
+            embed.setTitle("Server is online!")
+                    .setColor(Color.WHITE)
+                    .setTimestamp(Instant.now())
+                    .setFooter("DiscordLinked")
+            ;
+        }else{
+            embed.setTitle("Server is offline!")
+                    .setColor(Color.WHITE)
+                    .setTimestamp(Instant.now())
+                    .setFooter("DiscordLinked")
+            ;
+        }
 
         return embed.build();
     }
