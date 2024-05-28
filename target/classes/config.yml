@@ -26,7 +26,8 @@ minecraft:
 discord:
   # Sends the commands send in discord to the Online Minecraft players that have the permission
   sendCommands: true
-  webhook_url: ""
+  webhook_url_Chat: ""
+  webhook_url_Admin: ""
   guildId: ""
   chatChannel: ""
   adminChannel: ""

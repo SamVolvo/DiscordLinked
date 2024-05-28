@@ -16,7 +16,7 @@ public class DiscordWebhooks {
             json.put("avatar_url", avatarUrl);
             json.put("content", content);
 
-            URL url = new URL(MainConfig.getString("discord.webhook_url"));
+            URL url = new URL(MainConfig.getString("discord.webhook_url_Chat"));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
@@ -39,9 +39,9 @@ public class DiscordWebhooks {
             JSONObject json = new JSONObject();
             json.put("username", username);
             json.put("avatar_url", avatarUrl);
-            json.put("content", username + " used the " + content + " command.");
+            json.put("content", content);
 
-            URL url = new URL(MainConfig.getString("discord.webhook_url"));
+            URL url = new URL(MainConfig.getString("discord.webhook_url_Admin"));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");

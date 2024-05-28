@@ -1,9 +1,11 @@
 package com.samvolvo.discordlinked;
 
 import com.samvolvo.discordlinked.Utils.*;
+import com.samvolvo.discordlinked.discord.commands.Account;
 import com.samvolvo.discordlinked.discord.events.DcChatEvent;
 import com.samvolvo.discordlinked.discord.managers.CommandManager;
 import com.samvolvo.discordlinked.discord.managers.EmbedManager;
+import com.samvolvo.discordlinked.minecraft.events.CommandEvent;
 import com.samvolvo.discordlinked.minecraft.events.McChatEvent;
 import com.samvolvo.discordlinked.minecraft.events.JoinLeave;
 import net.dv8tion.jda.api.JDA;
@@ -27,6 +29,8 @@ public final class DiscordLinked extends JavaPlugin {
     private static File configFile;
     private static ShardManager shardManager;
 
+    private int tokenState;
+
     @Override
     public void onEnable() {
         Bukkit.getConsoleSender().sendMessage("§bDiscord&aLinked: §a§lActive");
@@ -43,6 +47,7 @@ public final class DiscordLinked extends JavaPlugin {
         if (token == null || token.equals("")) {
             getLogger().info("§cDisabling §cDiscordLinked: §cPlease fill in the bot token in the config.yml!");
             getServer().getPluginManager().disablePlugin(this);
+            tokenState = 0;
             return; // Exit the onEnable method early
         } else {
             getLogger().info("§aDC_Token found in config: " + token);
@@ -57,15 +62,14 @@ public final class DiscordLinked extends JavaPlugin {
         builder.build();
         shardManager = builder.build();
 
-        shardManager.addEventListener(new CommandManager(),new DcChatEvent());
+        shardManager.addEventListener(new CommandManager(),new DcChatEvent(),new Account());
 
         //Commands
 
         //Listeners
         Bukkit.getPluginManager().registerEvents(new JoinLeave(), this);
         Bukkit.getPluginManager().registerEvents(new McChatEvent(), this);
-
-
+        Bukkit.getPluginManager().registerEvents(new CommandEvent(), this);
 
     }
 
@@ -76,11 +80,13 @@ public final class DiscordLinked extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        for (Player player : Bukkit.getOnlinePlayers()){
-            SendToDiscord.sendJoinLeaveDc(player, "leave");
-        }
+        if (tokenState == 0){
+            for (Player player : Bukkit.getOnlinePlayers()){
+                SendToDiscord.sendJoinLeaveDc(player, "leave");
+            }
 
-        SendToDiscord.sendEmbedDc(EmbedManager.startStop("off"));
+            SendToDiscord.sendEmbedDc(EmbedManager.startStop("off"));
+        }
 
         Bukkit.getConsoleSender().sendMessage("§bDiscord&aLinked: §c§lDisabled");
         saveConfig();
@@ -98,6 +104,12 @@ public final class DiscordLinked extends JavaPlugin {
             config.save(configFile);
         } catch (IOException e) {
             getLogger().warning("Unable to save config.yml!");
+        }
+    }
+
+    public static void joinAllPlayers(){
+        for (Player player : Bukkit.getOnlinePlayers()){
+            SendToDiscord.sendJoinLeaveDc(player, "join");
         }
     }
 

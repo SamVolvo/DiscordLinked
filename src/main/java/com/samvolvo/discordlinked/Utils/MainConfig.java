@@ -20,4 +20,6 @@ public class MainConfig {
         return config.getBoolean(caller);
     }
 
+    public static String getPrefix(){return config.getString("minecraft.prefix");}
+
 }

@@ -1,4 +1,5 @@
 com\samvolvo\discordlinked\discord\managers\CommandManager.class
+com\samvolvo\discordlinked\minecraft\events\CommandEvent.class
 com\samvolvo\discordlinked\discord\managers\EmbedManager.class
 com\samvolvo\discordlinked\Utils\MainConfig.class
 com\samvolvo\discordlinked\Utils\SendToMc.class
@@ -7,6 +8,7 @@ com\samvolvo\discordlinked\Utils\SendToDiscord.class
 com\samvolvo\discordlinked\api\DiscordWebhooks.class
 com\samvolvo\discordlinked\minecraft\commands\Help.class
 com\samvolvo\discordlinked\discord\commands\Help.class
+com\samvolvo\discordlinked\discord\commands\Account.class
 com\samvolvo\discordlinked\api\CustomConfigCreator.class
 com\samvolvo\discordlinked\minecraft\events\JoinLeave.class
 com\samvolvo\discordlinked\DiscordLinked.class

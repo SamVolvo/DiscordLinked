@@ -1,6 +1,7 @@
 package com.samvolvo.discordlinked.Utils;
 
 import com.samvolvo.discordlinked.DiscordLinked;
+import com.samvolvo.discordlinked.api.DiscordWebhooks;
 import com.samvolvo.discordlinked.discord.managers.EmbedManager;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -20,8 +21,10 @@ public class SendToDiscord {
     public static void commandSendMC(String command, Player p){
         Guild guild = shardManager.getGuildById(guildId);
         TextChannel channel = getTextChannel(adminChannel, guild);
+        String playerUUID = p.getUniqueId().toString();
+        String avatarUrl = "https://api.mineatar.io/face/" + playerUUID;
 
-        channel.sendMessage()
+        DiscordWebhooks.sendDiscordWebhookCommand(p.getDisplayName(), avatarUrl, command);
     }
 
     public static void sendEmbedDc(MessageEmbed embed){
@@ -40,14 +43,12 @@ public class SendToDiscord {
     }
 
     public static void sendJoinLeaveDc(Player p, String joinLeave) {
-        System.out.println("Sending join/leave message. Guild ID: " + guildId);
         Guild guild = shardManager.getGuildById(guildId);
         if (guild == null) {
             System.out.println("Guild not found! Guild ID might be incorrect.");
             return;
         }
 
-        System.out.println("Chat Channel ID: " + channelId);
         TextChannel channel = getTextChannel(channelId, guild);
         if (channel == null) {
             System.out.println("Channel not found! Channel ID might be incorrect.");

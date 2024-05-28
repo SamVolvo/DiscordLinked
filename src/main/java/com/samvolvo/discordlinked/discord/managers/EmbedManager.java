@@ -1,6 +1,7 @@
 package com.samvolvo.discordlinked.discord.managers;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import org.bukkit.entity.Player;
@@ -55,5 +56,19 @@ public class EmbedManager {
         }
 
         return embed.build();
+    }
+
+    public static MessageEmbed account(Player player, User user, User bot){
+        EmbedBuilder embedBuilder = new EmbedBuilder()
+                .setAuthor("DiscordLinked", "https://samvolvo.com/", user.getAvatarUrl())
+                .setTitle( user.getEffectiveName() + "\'s Account")
+                .addField("Minecraft Display Name:", player.getDisplayName(), false)
+                .addField("Warnings:", "0", false)
+                .setThumbnail("https://api.mineatar.io/body/full/" + player.getUniqueId() + "?scale=16")
+                .setColor(Color.decode("#bbff00"))
+                .setFooter(bot.getEffectiveName(), bot.getAvatarUrl())
+                .setTimestamp(Instant.now());
+
+        return embedBuilder.build();
     }
 }
