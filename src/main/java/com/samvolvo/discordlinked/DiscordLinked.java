@@ -1,6 +1,7 @@
 package com.samvolvo.discordlinked;
 
 import com.samvolvo.discordlinked.Utils.*;
+import com.samvolvo.discordlinked.api.UserData;
 import com.samvolvo.discordlinked.discord.commands.Account;
 import com.samvolvo.discordlinked.discord.events.DcChatEvent;
 import com.samvolvo.discordlinked.discord.managers.CommandManager;
@@ -22,12 +23,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.UUID;
 
 public final class DiscordLinked extends JavaPlugin {
 
     private static FileConfiguration config;
     private static File configFile;
     private static ShardManager shardManager;
+    private static File userDirectory;
+    private static HashMap<UUID, UserData> userDataMap = new HashMap<>();
 
     private int tokenState;
 
@@ -38,6 +43,10 @@ public final class DiscordLinked extends JavaPlugin {
         saveDefaultConfig();
         loadConfig();
 
+        userDirectory = new File(getDataFolder(), "userDataFiles");
+        if (!userDirectory.exists()) {
+            userDirectory.mkdirs();
+        }
 
 
         //Config Checks!
@@ -111,6 +120,14 @@ public final class DiscordLinked extends JavaPlugin {
         for (Player player : Bukkit.getOnlinePlayers()){
             SendToDiscord.sendJoinLeaveDc(player, "join");
         }
+    }
+
+    public static File getUserDirectory() {
+        return userDirectory;
+    }
+
+    public static HashMap<UUID, UserData> getUserDataMap() {
+        return userDataMap;
     }
 
 }
