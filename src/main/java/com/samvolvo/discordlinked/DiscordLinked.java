@@ -1,6 +1,7 @@
 package com.samvolvo.discordlinked;
 
 import com.samvolvo.discordlinked.Utils.*;
+import com.samvolvo.discordlinked.api.CustomConfigCreator;
 import com.samvolvo.discordlinked.api.UserData;
 import com.samvolvo.discordlinked.discord.commands.Account;
 import com.samvolvo.discordlinked.discord.events.DcChatEvent;
@@ -33,6 +34,7 @@ public final class DiscordLinked extends JavaPlugin {
     private static ShardManager shardManager;
     private static File userDirectory;
     private static HashMap<UUID, UserData> userDataMap = new HashMap<>();
+    private static HashMap<String, UUID> discordIdMap = new HashMap<>();
 
     private int tokenState;
 
@@ -48,6 +50,13 @@ public final class DiscordLinked extends JavaPlugin {
             userDirectory.mkdirs();
         }
 
+        CustomConfigCreator.setCustomFile(getDataFolder().toString(), "discordIdUUID");
+        FileConfiguration discordIdUUIDFile = CustomConfigCreator.getCustomFile("discordIdUUID");
+        discordIdUUIDFile.options().copyDefaults(true);
+        CustomConfigCreator.saveCustomFile("discordIdUUID");
+        for (String discordId : discordIdUUIDFile.getConfigurationSection("discordId").getKeys(false)) {
+            discordIdMap.put(discordId, UUID.fromString(discordIdUUIDFile.get("discordId").toString()));
+        }
 
         //Config Checks!
         String token = getConfig().getString("DC_Token");
