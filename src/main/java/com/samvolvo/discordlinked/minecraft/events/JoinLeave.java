@@ -28,7 +28,7 @@ public class JoinLeave implements Listener {
         userFile.options().copyDefaults(true);
 
         if (!userFile.contains("displayName")) userFile.set("displayName", p.getDisplayName());
-        if (!userFile.contains("discordId")) userFile.set("discordId", "..."); // <- IDK how you get the discordId from the user
+        if (!userFile.contains("discordId")) userFile.set("discordId", null); // <- IDK how you get the discordId from the user
         if (!userFile.contains("warnings")) userFile.set("warnings", 0);
 
         CustomConfigCreator.saveCustomFile(p.getUniqueId().toString());
