@@ -1,6 +1,6 @@
 package com.samvolvo.discordlinked.api;
 
-import com.samvolvo.discordlinked.Utils.MainConfig;
+import com.samvolvo.discordlinked.DiscordLinked;
 import org.json.JSONObject;
 
 import java.io.OutputStream;
@@ -16,7 +16,7 @@ public class DiscordWebhooks {
             json.put("avatar_url", avatarUrl);
             json.put("content", content);
 
-            URL url = new URL(MainConfig.getString("discord.webhook_url_Chat"));
+            URL url = new URL(DiscordLinked.getInstance().getConfig().getString("discord.webhook_url_Chat"));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
@@ -41,7 +41,7 @@ public class DiscordWebhooks {
             json.put("avatar_url", avatarUrl);
             json.put("content", content);
 
-            URL url = new URL(MainConfig.getString("discord.webhook_url_Admin"));
+            URL url = new URL(DiscordLinked.getInstance().getConfig().getString("discord.webhook_url_Admin"));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");

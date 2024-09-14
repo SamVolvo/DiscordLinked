@@ -1,16 +1,20 @@
 package com.samvolvo.discordlinked;
 
-import com.samvolvo.discordlinked.Utils.*;
-import com.samvolvo.discordlinked.api.CustomConfigCreator;
-import com.samvolvo.discordlinked.api.UserData;
+import com.samvolvo.discordlinked.api.database.CodeCache;
+import com.samvolvo.discordlinked.api.database.Database;
+import com.samvolvo.discordlinked.api.database.PlayerCache;
+import com.samvolvo.discordlinked.api.database.utils.PlayerDataUtil;
+import com.samvolvo.discordlinked.api.tools.DiscordTools;
+import com.samvolvo.discordlinked.api.tools.Messages;
+import com.samvolvo.discordlinked.api.tools.MinecraftTools;
 import com.samvolvo.discordlinked.discord.commands.Account;
+import com.samvolvo.discordlinked.discord.commands.Link;
 import com.samvolvo.discordlinked.discord.events.DcChatEvent;
 import com.samvolvo.discordlinked.discord.managers.CommandManager;
 import com.samvolvo.discordlinked.discord.managers.EmbedManager;
 import com.samvolvo.discordlinked.minecraft.events.CommandEvent;
 import com.samvolvo.discordlinked.minecraft.events.McChatEvent;
-import com.samvolvo.discordlinked.minecraft.events.JoinLeave;
-import net.dv8tion.jda.api.JDA;
+import com.samvolvo.discordlinked.minecraft.events.OnJoin;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -19,51 +23,55 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Cod;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.UUID;
 
 public final class DiscordLinked extends JavaPlugin {
+    private static DiscordLinked instance;
 
     private static FileConfiguration config;
     private static File configFile;
     private static ShardManager shardManager;
     private static File userDirectory;
-    private static HashMap<UUID, UserData> userDataMap = new HashMap<>();
-    private static HashMap<String, UUID> discordIdMap = new HashMap<>();
 
     private int tokenState;
 
+    private static Database database;
+    private PlayerDataUtil playerDataUtil;
+    private PlayerCache playerCache;
+    private CodeCache codeCache;
+
+    // Utils
+    private Messages messages;
+    private DiscordTools discordTools;
+    private MinecraftTools minecraftTools;
+
     @Override
     public void onEnable() {
+        instance = this;
+
+
         Bukkit.getConsoleSender().sendMessage("§bDiscord&aLinked: §a§lActive");
 
         saveDefaultConfig();
         loadConfig();
 
-        userDirectory = new File(getDataFolder(), "userDataFiles");
-        if (!userDirectory.exists()) {
-            userDirectory.mkdirs();
-        }
-
-        CustomConfigCreator.setCustomFile(getDataFolder().toString(), "discordIdUUID");
-        FileConfiguration discordIdUUIDFile = CustomConfigCreator.getCustomFile("discordIdUUID");
-        discordIdUUIDFile.options().copyDefaults(true);
-        CustomConfigCreator.saveCustomFile("discordIdUUID");
-        for (String discordId : discordIdUUIDFile.getConfigurationSection("discordId").getKeys(false)) {
-            discordIdMap.put(discordId, UUID.fromString(discordIdUUIDFile.get("discordId").toString()));
-        }
+        // Activate Classes
+            // Data
+        database = new Database(this);
+        playerCache = new PlayerCache(this);
+        codeCache = new CodeCache();
+        playerDataUtil = new PlayerDataUtil(this);
 
         //Config Checks!
         String token = getConfig().getString("DC_Token");
-        getLogger().info("DC_Token in config: " + token); // Debug statement
 
-        if (token == null || token.equals("")) {
-            getLogger().info("§cDisabling §cDiscordLinked: §cPlease fill in the bot token in the config.yml!");
+        if (token == null || token.isEmpty()) {
+            getLogger().info("§cDisabling §cDiscordLinked: §cPlease fill in the bot token in the config.yml! Code: 0");
             getServer().getPluginManager().disablePlugin(this);
             tokenState = 0;
             return; // Exit the onEnable method early
@@ -71,7 +79,6 @@ public final class DiscordLinked extends JavaPlugin {
             getLogger().info("§aDC_Token found in config: " + token);
         }
 
-        MainConfig cnf = new MainConfig(this);
         //Discord
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(getConfig().getString("DC_Token"));
         builder.setStatus(OnlineStatus.DO_NOT_DISTURB);
@@ -80,35 +87,73 @@ public final class DiscordLinked extends JavaPlugin {
         builder.build();
         shardManager = builder.build();
 
-        shardManager.addEventListener(new CommandManager(),new DcChatEvent(),new Account());
+        // Tools
+        discordTools = new DiscordTools(this);
+        minecraftTools = new MinecraftTools(this);
+        messages = new Messages(this);
+
+        shardManager.addEventListener(new CommandManager(this),new DcChatEvent(this),new Account(), new Link(this));
 
         //Commands
+        getCommand("link").setExecutor(new com.samvolvo.discordlinked.minecraft.commands.Link(this));
 
         //Listeners
-        Bukkit.getPluginManager().registerEvents(new JoinLeave(), this);
-        Bukkit.getPluginManager().registerEvents(new McChatEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new CommandEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new McChatEvent(this), this);
+        Bukkit.getPluginManager().registerEvents(new CommandEvent(this), this);
+        Bukkit.getPluginManager().registerEvents(new OnJoin(this), this);
+
+
 
     }
 
 
-    public static ShardManager getShardManager() {
-        return shardManager;
-    }
+
 
     @Override
     public void onDisable() {
         if (tokenState == 0){
             for (Player player : Bukkit.getOnlinePlayers()){
-                SendToDiscord.sendJoinLeaveDc(player, "leave");
+                messages.sendJoinLeaveDc(player, "leave");
             }
 
-            SendToDiscord.sendEmbedDc(EmbedManager.startStop("off"));
+            messages.sendEmbedDc(EmbedManager.startStop("off"));
         }
 
         Bukkit.getConsoleSender().sendMessage("§bDiscord&aLinked: §c§lDisabled");
         saveConfig();
     }
+
+
+    // Getters
+    public ShardManager getShardManager() {
+        return shardManager;
+    }
+
+    public PlayerCache getPlayerCache(){
+        return playerCache;
+    }
+
+    public CodeCache getCodeCache(){
+        return codeCache;
+    }
+
+    public PlayerDataUtil getPlayerDataUtil(){
+        return playerDataUtil;
+    }
+
+    public DiscordTools getDiscordTools(){
+        return discordTools;
+    }
+
+    public Messages getMessages(){
+        return messages;
+    }
+
+    public MinecraftTools getMinecraftTools(){
+        return minecraftTools;
+    }
+
+    // Config
 
     private void loadConfig() {
         if (configFile == null) {
@@ -125,18 +170,12 @@ public final class DiscordLinked extends JavaPlugin {
         }
     }
 
-    public static void joinAllPlayers(){
-        for (Player player : Bukkit.getOnlinePlayers()){
-            SendToDiscord.sendJoinLeaveDc(player, "join");
-        }
+    public static Database getDatabase(){
+        return database;
     }
 
-    public static File getUserDirectory() {
-        return userDirectory;
-    }
-
-    public static HashMap<UUID, UserData> getUserDataMap() {
-        return userDataMap;
+    public static DiscordLinked getInstance(){
+        return instance;
     }
 
 }

@@ -8,6 +8,13 @@
 
 DC_Token: ""
 
+database:
+  URL: ""
+  Name: ""
+  User: ""
+  Password: ""
+
+
 # General settings
 general:
   joinMessages: true
@@ -26,6 +33,8 @@ minecraft:
 discord:
   # Sends the commands send in discord to the Online Minecraft players that have the permission
   sendCommands: true
+  # Your discord invite link.
+  invite: ""
   webhook_url_Chat: ""
   webhook_url_Admin: ""
   guildId: ""
