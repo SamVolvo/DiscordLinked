@@ -55,7 +55,7 @@ public final class DiscordLinked extends JavaPlugin {
         instance = this;
 
 
-        Bukkit.getConsoleSender().sendMessage("§bDiscord&aLinked: §a§lActive");
+        Bukkit.getConsoleSender().sendMessage("§bDiscord§aLinked§7: §aActive");
 
         saveDefaultConfig();
         loadConfig();
@@ -71,7 +71,7 @@ public final class DiscordLinked extends JavaPlugin {
         String token = getConfig().getString("DC_Token");
 
         if (token == null || token.isEmpty()) {
-            getLogger().info("§cDisabling §cDiscordLinked: §cPlease fill in the bot token in the config.yml! Code: 0");
+            getLogger().info("Disabling DiscordLinked: Please fill in the bot token in the config.yml! Code: 0");
             getServer().getPluginManager().disablePlugin(this);
             tokenState = 0;
             return; // Exit the onEnable method early
@@ -92,7 +92,7 @@ public final class DiscordLinked extends JavaPlugin {
         minecraftTools = new MinecraftTools(this);
         messages = new Messages(this);
 
-        shardManager.addEventListener(new CommandManager(this),new DcChatEvent(this),new Account(), new Link(this));
+        shardManager.addEventListener(new CommandManager(this),new DcChatEvent(this),new Account(this), new Link(this));
 
         //Commands
         getCommand("link").setExecutor(new com.samvolvo.discordlinked.minecraft.commands.Link(this));

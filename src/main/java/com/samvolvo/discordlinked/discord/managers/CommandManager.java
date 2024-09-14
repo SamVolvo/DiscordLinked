@@ -26,7 +26,7 @@ public class CommandManager extends ListenerAdapter {
         List<CommandData> commandData = new ArrayList<>();
 
         commandData.add(Commands.slash("account", "Check an account.")
-                .addOption(OptionType.USER, "user", "Who do you wanne check", false)
+                .addOption(OptionType.USER, "user", "Who do you wanne check", true)
         );
 
         commandData.add(Commands.slash("link", "Link your account to an minecraft account."));

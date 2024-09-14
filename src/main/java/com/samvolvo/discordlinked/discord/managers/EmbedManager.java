@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
@@ -58,12 +59,12 @@ public class EmbedManager {
         return embed.build();
     }
 
-    public static MessageEmbed account(Player player, User user, User bot){
+    public static MessageEmbed account(OfflinePlayer player, User user, User bot){
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setAuthor("DiscordLinked", "https://samvolvo.com/", user.getAvatarUrl())
                 .setTitle( user.getEffectiveName() + "\'s Account")
-                .addField("Minecraft Display Name:", player.getDisplayName(), false)
-                .addField("Warnings:", "0", false)
+                .addField("Minecraft Display Name:", player.getPlayer().getDisplayName(), false)
+                .addField("Warnings:", "Comming Soon!", false)
                 .setThumbnail("https://api.mineatar.io/body/full/" + player.getUniqueId() + "?scale=16")
                 .setColor(Color.decode("#bbff00"))
                 .setFooter(bot.getEffectiveName(), bot.getAvatarUrl())

@@ -3,6 +3,9 @@ package com.samvolvo.discordlinked.api.database.utils;
 import com.samvolvo.discordlinked.DiscordLinked;
 import com.samvolvo.discordlinked.api.database.Database;
 import com.samvolvo.discordlinked.api.database.models.PlayerData;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
@@ -31,6 +34,28 @@ public class PlayerDataUtil {
     public void updateData(String uuid, PlayerData data){
         database.updatePlayerData(data);
         plugin.getPlayerCache().put(uuid, data);
+    }
+
+    public OfflinePlayer getPlayerById(String discordId){
+        PlayerData data = database.findPlayerDataById(discordId);
+        if (data.getUuid() == null){
+            return null;
+        }
+
+        if (data.getUuid() != null){
+            // Vervang dit door de UUID van de speler die je wilt vinden
+            UUID playerUUID = UUID.fromString(data.getUuid());
+
+            // Haal de OfflinePlayer op basis van de UUID
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerUUID);
+
+            if (offlinePlayer != null && offlinePlayer.hasPlayedBefore()) {
+                System.out.println("Speler gevonden: " + offlinePlayer.getName());
+                return offlinePlayer;
+            }
+        }
+
+        return null;
     }
 
 
