@@ -1,9 +1,0 @@
-name: DiscordLinked
-version: '1.0'
-main: com.samvolvo.discordlinked.DiscordLinked
-api-version: '1.20'
-authors: [SamVolvo, Thijs_D, Siea]
-description: Link your discord and minecraft
-website: https://www.samvolvo.com/
-commands:
-  link:
