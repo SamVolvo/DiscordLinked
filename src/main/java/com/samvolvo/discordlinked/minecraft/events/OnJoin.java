@@ -29,13 +29,19 @@ public class OnJoin implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
+        if (plugin.getConfig().getBoolean("general.joinMessages")){
+            plugin.getMessages().sendJoinLeaveDc(e.getPlayer(), "join");
+        }
+
+        if (!plugin.getConfig().getBoolean("minecraft.needVerifiedDiscord")){
+            return;
+        }
+
         PlayerData data = plugin.getPlayerDataUtil().getDataByUuid(e.getPlayer().getUniqueId().toString());
         plugin.getPlayerCache().put(data.getUuid(), data);
 
-        plugin.getMessages().sendJoinLeaveDc(e.getPlayer(), "join");
-
         if (data.getId() != null && data.getId() != ""){
-            plugin.getLogger().info(e.getPlayer().getDisplayName() + " has joined with linked id (" + data.getId() + ")");
+            return;
         }else{
             e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("minecraft.prefix") + "&7: &cYou need to link your discord account to play on this server!"));
             TextComponent message = new TextComponent("§eClick here to join the discord!");
@@ -52,6 +58,10 @@ public class OnJoin implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e){
+        if (!plugin.getConfig().getBoolean("minecraft.needVerifiedDiscord")){
+            return;
+        }
+
         PlayerData data = playerCache.get(e.getPlayer().getUniqueId().toString());
         if (data.getId() == null || data.getId().isEmpty()) {
             e.setCancelled(true);

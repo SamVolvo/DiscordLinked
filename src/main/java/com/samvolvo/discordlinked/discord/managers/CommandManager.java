@@ -32,6 +32,7 @@ public class CommandManager extends ListenerAdapter {
         commandData.add(Commands.slash("link", "Link your account to an minecraft account."));
 
 
+
         //commandData.add(Commands.slash("help", "All the commands for line.lol bot"));
 
 

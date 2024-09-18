@@ -42,20 +42,8 @@ public class Messages extends ListenerAdapter {
 
     public void sendMessageMc(Member member, String message){
         for (Player player : Bukkit.getOnlinePlayers()){
-            player.sendMessage("§b§l[Dc] §f" + member.getEffectiveName() + ": " + message);
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("minecraft.messages.discord_prefix") + " &r" + member.getEffectiveName() + ": " + message));
         }
-    }
-
-    @Override
-    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        String command = event.getName();
-
-        for (Player player : Bukkit.getOnlinePlayers()){
-            if (player.hasPermission("discordlinked.commandLogs")){
-                player.sendMessage("§b§lDiscord Linked&e&l: &a§l"+ event.getMember().getEffectiveName() + " &ehas used the &c/" + command + " &ecommand in discord");
-            }
-        }
-
     }
 
 
@@ -101,12 +89,12 @@ public class Messages extends ListenerAdapter {
     }
 
     public void commandSendMC(String command, Player p){
-        Guild guild = shardManager.getGuildById(plugin.getConfig().getString("discord.guildId"));
+        Guild guild = shardManager.getGuildById(guildId);
         TextChannel channel = plugin.getDiscordTools().getTextChannel(adminChannel, guild);
         String playerUUID = p.getUniqueId().toString();
         String avatarUrl = "https://api.mineatar.io/face/" + playerUUID;
 
-        DiscordWebhooks.sendDiscordWebhookCommand(p.getDisplayName(), avatarUrl, command);
+        DiscordWebhooks.sendDiscordWebhookCommand(p.getName(), avatarUrl, command);
     }
 
     public void sendEmbedDc(MessageEmbed embed){
@@ -117,11 +105,18 @@ public class Messages extends ListenerAdapter {
     }
 
     public void sendMessageDc(Player p, String message){
-        String playerName = p.getDisplayName();
+        String playerName = p.getName();
         String playerUUID = p.getUniqueId().toString();
         String avatarUrl = "https://api.mineatar.io/face/" + playerUUID;
 
         sendDiscordWebhookChat(playerName, avatarUrl, message);
+    }
+
+    public void sendAdminEmbed(MessageEmbed embed){
+        Guild guild = shardManager.getGuildById(guildId);
+        TextChannel channel = plugin.getDiscordTools().getTextChannel(adminChannel, guild);
+
+        channel.sendMessageEmbeds(embed).queue();
     }
 
 }

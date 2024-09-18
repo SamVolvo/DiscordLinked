@@ -8,35 +8,54 @@
 
 DC_Token: ""
 
+# Database login credentials
 database:
+  # Url does not need the https:// (example: URL: "localhost:3306")
   URL: ""
+  # Your database name
   Name: ""
+  # A user with privileges on your database.
   User: ""
+  # The password of the user.
   Password: ""
 
 
 # General settings
 general:
+  # Do you want to send a message to the discord chat when a player joins the server?
   joinMessages: true
+  # Do you want the discord and minecraft server to be linked?
   chatSync: true
-  joinVerification: true
 
 minecraft:
+  # What prefix do you want the prefix to use? (Default &b&l[Discord&a&lLinked])
   prefix: "&b&l[Discord&a&lLinked]"
+  # Does a player need a linked discord account to join the server?
   needVerifiedDiscord: true
   # Sends the commands send in Minecraft to the Discord Channel that have been set
-  sendCommands: true
+  sendCommands:
+    isEnabled: true
+    # all command that will be ignored. Add as many as you want.
+    ignoredCommands:
+      - "help"
+      - "link"
+      - "spawn"
 
   messages:
+    # What is the prefix that will appear in the minecraft chat when a discord user sends a message? (Only when the chats are linked.)
     discord_prefix: "&b&l[DC]"
 
 discord:
-  # Sends the commands send in discord to the Online Minecraft players that have the permission
-  sendCommands: true
   # Your discord invite link.
   invite: ""
+  # Your webhook url that will have the chats linked.
   webhook_url_Chat: ""
+  # Your webhook url that will send the commands that are used in minecraft.
   webhook_url_Admin: ""
+  # Your discord server id.
   guildId: ""
+  # Your chat channel id. (Will be used to send the welcomes message.)
   chatChannel: ""
+  # Your admin channel id. (Will be used to send the commands.)
   adminChannel: ""
+

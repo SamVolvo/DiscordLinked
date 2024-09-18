@@ -25,7 +25,7 @@ public class Account extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getName().equalsIgnoreCase("account")){
             if (event.getOption("user") != null){
-                User user = event.getUser();
+                User user = event.getOption("user").getAsUser();
 
                 OfflinePlayer player = plugin.getPlayerDataUtil().getPlayerById(user.getId());
 
@@ -34,15 +34,11 @@ public class Account extends ListenerAdapter {
                     return;
                 }
 
-                MessageEmbed embed = EmbedManager.account(player, user, event.getJDA().getSelfUser());
+                MessageEmbed embed = plugin.getEmbedManager().account(player, user, event.getJDA().getSelfUser());
 
                 event.replyEmbeds(embed).queue();
             }else{
-                User user = event.getOption("user").getAsUser();
-                Player player = Bukkit.getPlayer("SamVolvo");
-                MessageEmbed embed = EmbedManager.account(player, user, event.getJDA().getSelfUser());
-
-                event.replyEmbeds(embed).queue();
+                event.reply("This user has no known minecraft account.").setEphemeral(true).queue();
             }
         }
     }

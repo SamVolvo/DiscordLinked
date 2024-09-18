@@ -8,25 +8,44 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
+import java.util.*;
+
 public class CommandEvent implements Listener {
     private final DiscordLinked plugin;
+    private final List<String> blockedCommands = new ArrayList<>();
 
     public CommandEvent(DiscordLinked plugin){
         this.plugin = plugin;
+
+        List<String> ignoredCommands = (List<String>) plugin.getConfig().getList("minecraft.sendCommands.ignoredCommands");
+        if (ignoredCommands != null) {
+            blockedCommands.addAll(ignoredCommands);
+        }
     }
 
     @EventHandler
-    public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+    public void onPlayerCommand(PlayerCommandPreprocessEvent event){
+
+        if (!plugin.getConfig().getBoolean("minecraft.sendCommands.isEnabled")){
+            return;
+        }
+
         Player player = event.getPlayer();
-        String command = event.getMessage(); // The full command entered by the player
+        String command = event.getMessage().substring(1);
 
-        // Customize the message format as desired
-        plugin.getMessages().commandSendMC(command, player);
+        if (blockedCommands.contains(command)) {
+            return;
+        }
 
-        // Send the message to another player (e.g., SamVolvo)
+        if (player.hasPermission("discordlinked.alerts.bypass")){
+            return;
+        }
+
+        plugin.getMessages().commandSendMC("/" + command, player);
+
         for (Player p : Bukkit.getOnlinePlayers()){
             if (p.hasPermission("discordlinked.alerts")){
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&', DiscordLinked.getInstance().getConfig().getString("minecraft.prefix") + " &c" + player.getDisplayName() + " &e has used &1" + command));
+                p.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPrefix() + " &c" + player.getDisplayName() + " &e has used &b/" + command + " &e in minecraft."));
             }
         }
     }

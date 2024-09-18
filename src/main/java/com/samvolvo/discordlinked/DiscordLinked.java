@@ -12,6 +12,7 @@ import com.samvolvo.discordlinked.discord.commands.Link;
 import com.samvolvo.discordlinked.discord.events.DcChatEvent;
 import com.samvolvo.discordlinked.discord.managers.CommandManager;
 import com.samvolvo.discordlinked.discord.managers.EmbedManager;
+import com.samvolvo.discordlinked.minecraft.commands.Warn;
 import com.samvolvo.discordlinked.minecraft.events.CommandEvent;
 import com.samvolvo.discordlinked.minecraft.events.McChatEvent;
 import com.samvolvo.discordlinked.minecraft.events.OnJoin;
@@ -23,7 +24,6 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Cod;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -49,6 +49,10 @@ public final class DiscordLinked extends JavaPlugin {
     private Messages messages;
     private DiscordTools discordTools;
     private MinecraftTools minecraftTools;
+    private EmbedManager embedManager;
+
+    // Config
+    private String prefix;
 
     @Override
     public void onEnable() {
@@ -60,12 +64,16 @@ public final class DiscordLinked extends JavaPlugin {
         saveDefaultConfig();
         loadConfig();
 
+        prefix = getConfig().getString("minecraft.prefix");
+
         // Activate Classes
             // Data
         database = new Database(this);
         playerCache = new PlayerCache(this);
         codeCache = new CodeCache();
         playerDataUtil = new PlayerDataUtil(this);
+        embedManager = new EmbedManager(this);
+
 
         //Config Checks!
         String token = getConfig().getString("DC_Token");
@@ -75,8 +83,6 @@ public final class DiscordLinked extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             tokenState = 0;
             return; // Exit the onEnable method early
-        } else {
-            getLogger().info("§aDC_Token found in config: " + token);
         }
 
         //Discord
@@ -96,6 +102,7 @@ public final class DiscordLinked extends JavaPlugin {
 
         //Commands
         getCommand("link").setExecutor(new com.samvolvo.discordlinked.minecraft.commands.Link(this));
+        getCommand("warn").setExecutor(new Warn(this));
 
         //Listeners
         Bukkit.getPluginManager().registerEvents(new McChatEvent(this), this);
@@ -151,6 +158,14 @@ public final class DiscordLinked extends JavaPlugin {
 
     public MinecraftTools getMinecraftTools(){
         return minecraftTools;
+    }
+
+    public String getPrefix(){
+        return prefix;
+    }
+
+    public EmbedManager getEmbedManager(){
+        return embedManager;
     }
 
     // Config

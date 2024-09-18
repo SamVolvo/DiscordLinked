@@ -7,3 +7,17 @@ description: Link your discord and minecraft
 website: https://www.samvolvo.com/
 commands:
   link:
+    description: "link your minecraft account to discord"
+  warn:
+    description: "Warn a player!"
+    permission: discordlinked.warn
+    usage: /warn <player>
+permissions:
+  discordlinked.alerts:
+    description: "Get alerts if someone uses a command"
+    default: false
+  discordlinked.alerts.bypass:
+    description: "bypass the command alerts"
+    default: false
+  discordlinked.warn:
+    description: "Warn a player"

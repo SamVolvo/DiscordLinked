@@ -4,7 +4,7 @@
   <groupId>com.samvolvo</groupId>
   <artifactId>DiscordLinked</artifactId>
   <name>DiscordLinked</name>
-  <version>1.1</version>
+  <version>1.2</version>
   <description>Link your discord and minecraft</description>
   <url>https://www.samvolvo.com/</url>
   <build>

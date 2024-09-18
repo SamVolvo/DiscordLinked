@@ -50,7 +50,6 @@ public class PlayerDataUtil {
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerUUID);
 
             if (offlinePlayer != null && offlinePlayer.hasPlayedBefore()) {
-                System.out.println("Speler gevonden: " + offlinePlayer.getName());
                 return offlinePlayer;
             }
         }
