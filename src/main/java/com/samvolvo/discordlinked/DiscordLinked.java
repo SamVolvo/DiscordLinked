@@ -1,5 +1,6 @@
 package com.samvolvo.discordlinked;
 
+import com.samvolvo.discordlinked.api.Metrics;
 import com.samvolvo.discordlinked.api.database.CodeCache;
 import com.samvolvo.discordlinked.api.database.Database;
 import com.samvolvo.discordlinked.api.database.PlayerCache;
@@ -57,7 +58,7 @@ public final class DiscordLinked extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-
+        Metrics metrics = new Metrics(this, 23402);
 
         Bukkit.getConsoleSender().sendMessage("§bDiscord§aLinked§7: §aActive");
 
@@ -66,24 +67,40 @@ public final class DiscordLinked extends JavaPlugin {
 
         prefix = getConfig().getString("minecraft.prefix");
 
-        // Activate Classes
-            // Data
-        database = new Database(this);
-        playerCache = new PlayerCache(this);
-        codeCache = new CodeCache();
-        playerDataUtil = new PlayerDataUtil(this);
-        embedManager = new EmbedManager(this);
 
 
         //Config Checks!
         String token = getConfig().getString("DC_Token");
 
         if (token == null || token.isEmpty()) {
-            getLogger().info("Disabling DiscordLinked: Please fill in the bot token in the config.yml! Code: 0");
+            getLogger().warning("Disabling DiscordLinked: Please fill in the bot token in the config.yml! Code: 0");
             getServer().getPluginManager().disablePlugin(this);
             tokenState = 0;
             return; // Exit the onEnable method early
         }
+
+        String url = getConfig().getString("database.URL");
+        String name = getConfig().getString("database.Name");
+        String user = getConfig().getString("database.User");
+        String password = getConfig().getString("database.Password");
+
+        if (url == null || url.isEmpty() ||
+                name == null || name.isEmpty() ||
+                user == null || user.isEmpty() ||
+                password == null || password.isEmpty()) {
+            getLogger().warning("Disabling DiscordLinked: Please fill in the database credentials in the config.yml! Code: 0");
+            tokenState = 0;
+            getServer().getPluginManager().disablePlugin(this);
+            return; // Exit the onEnable method early
+        }
+
+
+
+        database = new Database(this);
+        playerCache = new PlayerCache(this);
+        codeCache = new CodeCache();
+        playerDataUtil = new PlayerDataUtil(this);
+        embedManager = new EmbedManager(this);
 
         //Discord
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(getConfig().getString("DC_Token"));
@@ -118,7 +135,7 @@ public final class DiscordLinked extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (tokenState == 0){
+        if (tokenState != 0){
             for (Player player : Bukkit.getOnlinePlayers()){
                 messages.sendJoinLeaveDc(player, "leave");
             }
