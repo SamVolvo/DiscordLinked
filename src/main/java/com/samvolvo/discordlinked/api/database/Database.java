@@ -34,7 +34,6 @@ public class Database {
             createTables();
         }catch (SQLException e){
             plugin.getLogger().info("Failed to connect to the database. Code: 13");
-            e.printStackTrace();
         }
     }
 
@@ -43,7 +42,7 @@ public class Database {
             return dataSource.getConnection();
         }catch (SQLException e){
             plugin.getLogger().info("An error accured while trying to get the database. Code: 13");
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
@@ -61,7 +60,6 @@ public class Database {
 
         }catch (SQLException e){
             plugin.getLogger().info("There was an error in the database. Code: 14");
-            throw new RuntimeException(e);
         }
     }
 

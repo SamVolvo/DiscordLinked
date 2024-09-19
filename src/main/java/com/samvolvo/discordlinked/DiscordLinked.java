@@ -1,6 +1,7 @@
 package com.samvolvo.discordlinked;
 
 import com.samvolvo.discordlinked.api.Metrics;
+import com.samvolvo.discordlinked.api.UpdateChecker;
 import com.samvolvo.discordlinked.api.database.CodeCache;
 import com.samvolvo.discordlinked.api.database.Database;
 import com.samvolvo.discordlinked.api.database.PlayerCache;
@@ -51,6 +52,7 @@ public final class DiscordLinked extends JavaPlugin {
     private DiscordTools discordTools;
     private MinecraftTools minecraftTools;
     private EmbedManager embedManager;
+    private UpdateChecker updateChecker;
 
     // Config
     private String prefix;
@@ -58,7 +60,6 @@ public final class DiscordLinked extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        Metrics metrics = new Metrics(this, 23402);
 
         Bukkit.getConsoleSender().sendMessage("§bDiscord§aLinked§7: §aActive");
 
@@ -126,8 +127,16 @@ public final class DiscordLinked extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new CommandEvent(this), this);
         Bukkit.getPluginManager().registerEvents(new OnJoin(this), this);
 
+        Metrics metrics = new Metrics(this, 23402);
 
+        // Check if the plugin is the latest version
+        updateChecker = new UpdateChecker(this);
+        String message = updateChecker.generateUpdateMessage(getDescription().getVersion());
+        if (message != null){
+            Bukkit.getLogger().warning(message);
+        }
 
+        tokenState = 1;
     }
 
 
@@ -183,6 +192,10 @@ public final class DiscordLinked extends JavaPlugin {
 
     public EmbedManager getEmbedManager(){
         return embedManager;
+    }
+
+    public UpdateChecker getUpdateChecker(){
+        return updateChecker;
     }
 
     // Config

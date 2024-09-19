@@ -27,8 +27,14 @@ public class OnJoin implements Listener {
         this.playerCache = plugin.getPlayerCache();
     }
 
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
+        String versionMessage = plugin.getUpdateChecker().generateUpdateMessageColored(plugin.getDescription().getVersion());
+        if (versionMessage != null){
+            e.getPlayer().sendMessage(versionMessage);
+        }
+
         if (plugin.getConfig().getBoolean("general.joinMessages")){
             plugin.getMessages().sendJoinLeaveDc(e.getPlayer(), "join");
         }
