@@ -31,6 +31,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public final class DiscordLinked extends JavaPlugin {
     private static DiscordLinked instance;
@@ -131,9 +132,11 @@ public final class DiscordLinked extends JavaPlugin {
 
         // Check if the plugin is the latest version
         updateChecker = new UpdateChecker(this);
-        String message = updateChecker.generateUpdateMessage(getDescription().getVersion());
-        if (message != null){
-            Bukkit.getLogger().warning(message);
+        List<String> nameless = updateChecker.generateUpdateMessage(getDescription().getVersion());
+        if (nameless.isEmpty()){
+            for (String message : nameless){
+                Bukkit.getLogger().warning(message);
+            }
         }
 
         tokenState = 1;

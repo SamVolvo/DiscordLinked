@@ -9,6 +9,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class UpdateChecker {
     private final DiscordLinked plugin;
@@ -19,24 +22,26 @@ public class UpdateChecker {
 
     private final String RELEASES_URL = "https://api.github.com/repos/SamVolvo/DiscordLinked/releases";
 
-    public String generateUpdateMessage(String v) {
+    public List<String> generateUpdateMessage(String v) {
         try{
             String currentVersion = "V" + v;
             int releasesBehind = getReleasesBehind(currentVersion);
             JsonArray releases = getAllReleases();
             String tagName = releases.get(0).getAsJsonObject().get("tag_name").getAsString();
-            String message = null;
+            List<String> message = new ArrayList<>();
             if (releasesBehind > 0) {
-                message = ("*********************************************************************\n" +
-                        "DiscordLinked is outdated!" +
-                        "\"Latest version: " + tagName + "\n" +
-                        "Your version: " +   plugin.getDescription().getVersion() + "\n" +
-                        "https://www.spigotmc.org/resources/discordlinked.119665/ \n" +
-                        "*********************************************************************");
+                message.add("*********************************************************************");
+                       message.add("DiscordLinked is outdated!");
+                       message.add("\"Latest version: " + tagName);
+                       message.add("Your version: " +   plugin.getDescription().getVersion());
+                       message.add("https://www.spigotmc.org/resources/discordlinked.119665/");
+                       message.add("*********************************************************************");
+            }else{
+               return message;
             }
             return message;
         }catch (Exception e){
-            return "Unable to connect to version Check!";
+            return Collections.singletonList("Unable to connect to version Check!");
         }
     }
 

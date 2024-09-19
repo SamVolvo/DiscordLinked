@@ -3,37 +3,42 @@ import com.samvolvo.discordlinked.DiscordLinked;
 import com.samvolvo.discordlinked.api.database.models.PlayerData;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.sql.*;
 
 public class Database {
     private HikariDataSource dataSource;
-    private final DiscordLinked plugin;
+    private DiscordLinked plugin;
 
 
     public Database(DiscordLinked discordLinked){
-        plugin = discordLinked;
-        FileConfiguration config = plugin.getConfig();
-        HikariConfig dbConfig = new HikariConfig();
-        dbConfig.setJdbcUrl("jdbc:mysql://" + config.getString("database.URL") + "/" + config.getString("database.Name"));
-        dbConfig.setUsername(config.getString("database.User"));
-        dbConfig.setPassword(config.getString("database.Password"));
-        dbConfig.addDataSourceProperty("cachePrepStmts", "true");
-        dbConfig.addDataSourceProperty("prepStmtCacheSize", "250");
-        dbConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        dbConfig.setMaximumPoolSize(100);
+        try{
+            plugin = discordLinked;
+            FileConfiguration config = plugin.getConfig();
+            HikariConfig dbConfig = new HikariConfig();
+            dbConfig.setJdbcUrl("jdbc:mysql://" + config.getString("database.URL") + "/" + config.getString("database.Name"));
+            dbConfig.setUsername(config.getString("database.User"));
+            dbConfig.setPassword(config.getString("database.Password"));
+            dbConfig.addDataSourceProperty("cachePrepStmts", "true");
+            dbConfig.addDataSourceProperty("prepStmtCacheSize", "250");
+            dbConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+            dbConfig.setMaximumPoolSize(100);
 
-        dataSource = new HikariDataSource(dbConfig);
+            dataSource = new HikariDataSource(dbConfig);
 
-        // Test the connection and log succes!
-        try(Connection connection = dataSource.getConnection()){
-            if (connection != null && !connection.isClosed()){
-                plugin.getLogger().info("Successfully connected to the database.");
+            // Test the connection and log succes!
+            try(Connection connection = dataSource.getConnection()){
+                if (connection != null && !connection.isClosed()){
+                    plugin.getLogger().info("Successfully connected to the database.");
+                }
+                createTables();
+            }catch (SQLException e){
+                plugin.getLogger().info("Failed to connect to the database. Code: 13");
             }
-            createTables();
-        }catch (SQLException e){
-            plugin.getLogger().info("Failed to connect to the database. Code: 13");
+        }catch (Exception e){
+            Bukkit.getLogger().warning("Could not connect to a database.");
         }
     }
 
