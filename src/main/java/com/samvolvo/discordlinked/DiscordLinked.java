@@ -133,7 +133,7 @@ public final class DiscordLinked extends JavaPlugin {
         // Check if the plugin is the latest version
         updateChecker = new UpdateChecker(this);
         List<String> nameless = updateChecker.generateUpdateMessage(getDescription().getVersion());
-        if (nameless.isEmpty()){
+        if (!nameless.isEmpty()){
             for (String message : nameless){
                 Bukkit.getLogger().warning(message);
             }
