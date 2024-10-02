@@ -31,14 +31,14 @@ public class Database {
             // Test the connection and log succes!
             try(Connection connection = dataSource.getConnection()){
                 if (connection != null && !connection.isClosed()){
-                    plugin.getLogger().info("Successfully connected to the database.");
+                    plugin.samvolvoLogger().info("Successfully connected to the database.");
                 }
                 createTables();
             }catch (SQLException e){
-                plugin.getLogger().info("Failed to connect to the database. Code: 13");
+                plugin.samvolvoLogger().error("Failed to connect to the database.");
             }
         }catch (Exception e){
-            Bukkit.getLogger().warning("Could not connect to a database.");
+            plugin.samvolvoLogger().warning("Could not connect to a database.");
         }
     }
 
@@ -46,7 +46,7 @@ public class Database {
         try{
             return dataSource.getConnection();
         }catch (SQLException e){
-            plugin.getLogger().info("An error accured while trying to get the database. Code: 13");
+            plugin.samvolvoLogger().info("An error accured while trying to get the database.");
             return null;
         }
     }
@@ -64,7 +64,7 @@ public class Database {
             playerDataStatement.execute("CREATE TABLE IF NOT EXISTS PlayerData(DataId INT AUTO_INCREMENT PRIMARY KEY, uuid varchar(36), id varchar(36), warnings TINYINT UNSIGNED);");
 
         }catch (SQLException e){
-            plugin.getLogger().info("There was an error in the database. Code: 14");
+            plugin.samvolvoLogger().info("There was an error in the database.");
         }
     }
 
@@ -93,7 +93,7 @@ public class Database {
             }
 
         }catch (SQLException e){
-            plugin.getLogger().info("There was an error finding data in the database. Code: 15");
+            plugin.samvolvoLogger().error("There was an error finding data in the database.");
             throw new RuntimeException(e);
         }
     }
@@ -122,7 +122,7 @@ public class Database {
             }
 
         }catch (SQLException e){
-            plugin.getLogger().info("There was an error finding data in the database. Code: 15");
+            plugin.samvolvoLogger().error("There was an error finding data in the database.");
             throw new RuntimeException(e);
         }
     }
@@ -139,7 +139,7 @@ public class Database {
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {
-            plugin.getLogger().info("There was an error creating player data in the database. Code: 16");
+            plugin.samvolvoLogger().info("There was an error creating player data in the database.");
             throw new RuntimeException(e);
         }
     }
@@ -155,7 +155,7 @@ public class Database {
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {
-            plugin.getLogger().info("There was an error updating player data in the database. Code: 17");
+            plugin.samvolvoLogger().error("There was an error updating player data in the database.");
             throw new RuntimeException(e);
         }
     }

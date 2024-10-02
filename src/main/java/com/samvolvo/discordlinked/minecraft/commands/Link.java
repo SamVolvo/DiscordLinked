@@ -47,6 +47,8 @@ public class Link implements CommandExecutor {
                     }
                 }
             }
+        }else{
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[COMMAND] [" + plugin.getName() + "] &rYou cannot link a console to a discord account."));
         }
 
         return true;

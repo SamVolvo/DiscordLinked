@@ -65,6 +65,11 @@
 
   <dependencies>
       <dependency>
+          <groupId>com.samvolvo</groupId>
+          <artifactId>SamVolvoAPI</artifactId>
+          <version>1.0</version>
+      </dependency>
+      <dependency>
           <groupId>org.spigotmc</groupId>
           <artifactId>spigot-api</artifactId>
           <version>1.20.6-R0.1-SNAPSHOT</version>

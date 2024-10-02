@@ -47,6 +47,27 @@ public class Warn implements CommandExecutor {
 
                 plugin.getMessages().McMessage(player, plugin.getPrefix() + "&7: &eWarned " + target.getName());
                 plugin.getMessages().McMessage(target, plugin.getPrefix() + "&7: &eYou just got warned by &c" + player.getDisplayName());
+        }else{
+            if (args.length != 1){
+                plugin.samvolvoLogger().error("&cWrong usage of the command. use /warn <player>");
+                return true;
+            }
+
+            Player target = Bukkit.getPlayer(args[0]);
+            if (target == null){
+                plugin.samvolvoLogger().error("&cThis player is unknown or not online.");
+                return true;
+            }
+
+            PlayerData data = plugin.getPlayerCache().get(target.getUniqueId().toString());
+            int warnings = data.getWarnings();
+
+            data.setWarnings(warnings + 1);
+            plugin.getPlayerCache().put(data.getUuid(), data);
+            plugin.getPlayerDataUtil().updateData(data.getUuid(), data);
+
+            plugin.samvolvoLogger().info("&fYou warned " + target.getName());
+            plugin.getMessages().McMessage(target, plugin.getPrefix() + "&7: &eYou just got warned by &cConsole.");
         }
         return true;
     }

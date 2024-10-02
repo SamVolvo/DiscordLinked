@@ -58,18 +58,18 @@ public class Messages extends ListenerAdapter {
         try {
             guild = shardManager.getGuildById(plugin.getConfig().getString("discord.guildId"));
         } catch (NullPointerException e){
-            plugin.getLogger().info("Please specify a Guild ID in the config.");
+            plugin.samvolvoLogger().info("Please specify a Guild ID in the config.");
             return;
         }
 
         if (guild == null) {
-            plugin.getLogger().info("Guild not found! Guild ID might be incorrect.");
+            plugin.samvolvoLogger().info("Guild not found! Guild ID might be incorrect.");
             return;
         }
 
         TextChannel channel = plugin.getDiscordTools().getTextChannel(channelId, guild);
         if (channel == null) {
-            plugin.getLogger().info("Channel not found! Channel ID might be incorrect.");
+            plugin.samvolvoLogger().info("Channel not found! Channel ID might be incorrect.");
             return;
         }
 

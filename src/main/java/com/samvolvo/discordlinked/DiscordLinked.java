@@ -1,7 +1,5 @@
 package com.samvolvo.discordlinked;
 
-import com.samvolvo.discordlinked.api.Metrics;
-import com.samvolvo.discordlinked.api.UpdateChecker;
 import com.samvolvo.discordlinked.api.database.CodeCache;
 import com.samvolvo.discordlinked.api.database.Database;
 import com.samvolvo.discordlinked.api.database.PlayerCache;
@@ -9,15 +7,16 @@ import com.samvolvo.discordlinked.api.database.utils.PlayerDataUtil;
 import com.samvolvo.discordlinked.api.tools.DiscordTools;
 import com.samvolvo.discordlinked.api.tools.Messages;
 import com.samvolvo.discordlinked.api.tools.MinecraftTools;
-import com.samvolvo.discordlinked.discord.commands.Account;
+import com.samvolvo.discordlinked.discord.commands.*;
 import com.samvolvo.discordlinked.discord.commands.Link;
-import com.samvolvo.discordlinked.discord.events.DcChatEvent;
-import com.samvolvo.discordlinked.discord.managers.CommandManager;
-import com.samvolvo.discordlinked.discord.managers.EmbedManager;
-import com.samvolvo.discordlinked.minecraft.commands.Warn;
-import com.samvolvo.discordlinked.minecraft.events.CommandEvent;
-import com.samvolvo.discordlinked.minecraft.events.McChatEvent;
-import com.samvolvo.discordlinked.minecraft.events.OnJoin;
+import com.samvolvo.discordlinked.discord.events.*;
+import com.samvolvo.discordlinked.discord.managers.*;
+import com.samvolvo.discordlinked.minecraft.commands.*;
+import com.samvolvo.discordlinked.minecraft.events.*;
+import com.samvolvo.samVolvoAPI.SamVolvoAPI;
+import com.samvolvo.samVolvoAPI.bStats.Metrics;
+import com.samvolvo.samVolvoAPI.tools.Logger;
+import com.samvolvo.samVolvoAPI.tools.UpdateChecker;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -35,11 +34,12 @@ import java.util.List;
 
 public final class DiscordLinked extends JavaPlugin {
     private static DiscordLinked instance;
-
     private static FileConfiguration config;
     private static File configFile;
     private static ShardManager shardManager;
     private static File userDirectory;
+    private SamVolvoAPI api;
+    private Logger logger;
 
     private int tokenState;
 
@@ -54,32 +54,34 @@ public final class DiscordLinked extends JavaPlugin {
     private MinecraftTools minecraftTools;
     private EmbedManager embedManager;
     private UpdateChecker updateChecker;
-
     // Config
     private String prefix;
 
     @Override
     public void onEnable() {
         instance = this;
-
-        Bukkit.getConsoleSender().sendMessage("§bDiscord§aLinked§7: §aActive");
+        api = new SamVolvoAPI(this);
+        logger = new Logger(this);
+        logger.loading("§bDiscord§aLinked§7: §aActive");
 
         saveDefaultConfig();
         loadConfig();
 
+
+
         prefix = getConfig().getString("minecraft.prefix");
-
-
 
         //Config Checks!
         String token = getConfig().getString("DC_Token");
 
         if (token == null || token.isEmpty()) {
-            getLogger().warning("Disabling DiscordLinked: Please fill in the bot token in the config.yml! Code: 0");
+            logger.warning("Disabling DiscordLinked: Please fill in the bot token in the config.yml! Code: 0");
             getServer().getPluginManager().disablePlugin(this);
             tokenState = 0;
             return; // Exit the onEnable method early
         }
+
+
 
         String url = getConfig().getString("database.URL");
         String name = getConfig().getString("database.Name");
@@ -90,7 +92,7 @@ public final class DiscordLinked extends JavaPlugin {
                 name == null || name.isEmpty() ||
                 user == null || user.isEmpty() ||
                 password == null || password.isEmpty()) {
-            getLogger().warning("Disabling DiscordLinked: Please fill in the database credentials in the config.yml! Code: 0");
+            logger.warning("Disabling DiscordLinked: Please fill in the database credentials in the config.yml! Code: 0");
             tokenState = 0;
             getServer().getPluginManager().disablePlugin(this);
             return; // Exit the onEnable method early
@@ -131,13 +133,8 @@ public final class DiscordLinked extends JavaPlugin {
         Metrics metrics = new Metrics(this, 23402);
 
         // Check if the plugin is the latest version
-        updateChecker = new UpdateChecker(this);
-        List<String> nameless = updateChecker.generateUpdateMessage(getDescription().getVersion());
-        if (!nameless.isEmpty()){
-            for (String message : nameless){
-                Bukkit.getLogger().warning(message);
-            }
-        }
+        updateChecker = new UpdateChecker(this, "SamVolvo", "DiscordLinked", "https://modrinth.com/plugin/discordlinked");
+        checkForUpdates();
 
         tokenState = 1;
     }
@@ -155,7 +152,7 @@ public final class DiscordLinked extends JavaPlugin {
             messages.sendEmbedDc(EmbedManager.startStop("off"));
         }
 
-        Bukkit.getConsoleSender().sendMessage("§bDiscord&aLinked: §c§lDisabled");
+       logger.info("§bDiscord&aLinked: §c§lDisabled");
         saveConfig();
     }
 
@@ -200,6 +197,8 @@ public final class DiscordLinked extends JavaPlugin {
     public UpdateChecker getUpdateChecker(){
         return updateChecker;
     }
+    public SamVolvoAPI getApi(){return api;}
+    public Logger samvolvoLogger(){return logger;}
 
     // Config
 
@@ -214,7 +213,7 @@ public final class DiscordLinked extends JavaPlugin {
         try {
             config.save(configFile);
         } catch (IOException e) {
-            getLogger().warning("Unable to save config.yml!");
+            logger.warning("Unable to save config.yml!");
         }
     }
 
@@ -226,4 +225,12 @@ public final class DiscordLinked extends JavaPlugin {
         return instance;
     }
 
+    private void checkForUpdates(){
+        List<String> nameless = updateChecker.generateUpdateMessage(getDescription().getVersion());
+        if (!nameless.isEmpty()){
+            for (String message : nameless){
+                logger.warning(message);
+            }
+        }
+    }
 }
