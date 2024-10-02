@@ -25,6 +25,10 @@ public class McChatEvent implements Listener {
 
     @EventHandler
     public void onChatCheck(AsyncPlayerChatEvent e){
+        if (!plugin.getConfig().getBoolean("minecraft.needVerifiedDiscord")){
+            return;
+        }
+
         PlayerData data = playerCache.get(e.getPlayer().getUniqueId().toString());
         if (data.getId() == null || data.getId().isEmpty()) {
             e.setCancelled(true);
