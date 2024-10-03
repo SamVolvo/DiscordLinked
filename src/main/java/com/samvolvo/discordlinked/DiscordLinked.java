@@ -8,6 +8,7 @@ import com.samvolvo.discordlinked.api.tools.DiscordTools;
 import com.samvolvo.discordlinked.api.tools.Messages;
 import com.samvolvo.discordlinked.api.tools.MinecraftTools;
 import com.samvolvo.discordlinked.discord.commands.*;
+import com.samvolvo.discordlinked.discord.commands.Ban;
 import com.samvolvo.discordlinked.discord.commands.Link;
 import com.samvolvo.discordlinked.discord.events.*;
 import com.samvolvo.discordlinked.discord.managers.*;
@@ -90,8 +91,7 @@ public final class DiscordLinked extends JavaPlugin {
 
         if (url == null || url.isEmpty() ||
                 name == null || name.isEmpty() ||
-                user == null || user.isEmpty() ||
-                password == null || password.isEmpty()) {
+                user == null || user.isEmpty() ){
             logger.warning("Disabling DiscordLinked: Please fill in the database credentials in the config.yml! Code: 0");
             tokenState = 0;
             getServer().getPluginManager().disablePlugin(this);
@@ -119,11 +119,12 @@ public final class DiscordLinked extends JavaPlugin {
         minecraftTools = new MinecraftTools(this);
         messages = new Messages(this);
 
-        shardManager.addEventListener(new CommandManager(this),new DcChatEvent(this),new Account(this), new Link(this));
+        shardManager.addEventListener(new CommandManager(this),new DcChatEvent(this),new Account(this), new Link(this), new Ban(this));
 
         //Commands
         getCommand("link").setExecutor(new com.samvolvo.discordlinked.minecraft.commands.Link(this));
         getCommand("warn").setExecutor(new Warn(this));
+        getCommand("ban").setExecutor(new com.samvolvo.discordlinked.minecraft.commands.Ban(this));
 
         //Listeners
         Bukkit.getPluginManager().registerEvents(new McChatEvent(this), this);

@@ -6,7 +6,7 @@
 
   <groupId>com.samvolvo</groupId>
   <artifactId>DiscordLinked</artifactId>
-  <version>1.2.2</version>
+  <version>1.3</version>
   <packaging>jar</packaging>
 
   <name>DiscordLinked</name>

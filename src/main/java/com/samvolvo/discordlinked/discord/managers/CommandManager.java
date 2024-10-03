@@ -31,6 +31,12 @@ public class CommandManager extends ListenerAdapter {
 
         commandData.add(Commands.slash("link", "Link your account to an minecraft account."));
 
+        commandData.add(Commands.slash("ban", "Ban a player from discord and minecraft.")
+                .addOption(OptionType.USER, "user", "Who do you wanne ban", true)
+                .addOption(OptionType.STRING, "reason", "Why do you ban this user?", false)
+                .addOption(OptionType.INTEGER, "duration", "How long do you wanne ban this user?", false)
+        );
+
 
 
         //commandData.add(Commands.slash("help", "All the commands for line.lol bot"));

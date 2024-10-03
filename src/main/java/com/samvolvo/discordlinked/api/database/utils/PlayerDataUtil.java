@@ -2,6 +2,7 @@ package com.samvolvo.discordlinked.api.database.utils;
 
 import com.samvolvo.discordlinked.DiscordLinked;
 import com.samvolvo.discordlinked.api.database.Database;
+import com.samvolvo.discordlinked.api.database.PlayerCache;
 import com.samvolvo.discordlinked.api.database.models.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -20,6 +21,11 @@ public class PlayerDataUtil {
 
     public PlayerData getDataByUuid(String uuid){
         PlayerData data = database.findPlayerDataByUUID(uuid);
+        return data;
+    }
+
+    public PlayerData getDataById(String id){
+        PlayerData data = database.findPlayerDataById(id);
         return data;
     }
 
