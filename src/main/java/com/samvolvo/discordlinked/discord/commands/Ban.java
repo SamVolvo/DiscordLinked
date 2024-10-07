@@ -40,6 +40,7 @@ public class Ban extends ListenerAdapter {
         if (player == null){
             event.getHook().sendMessage("There was no minecraft account found on this member.\nThe member is banned from the discord but not from minecraft.").queue();
         }else{
+            target.kick(reason);
             // Ban the player from the Minecraft server
             BanList banList = Bukkit.getBanList(BanList.Type.NAME);
             BanEntry banEntry = banList.addBan(player.getName(), reason, (Date) null, "Discord Ban");
